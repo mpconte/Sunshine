@@ -8,8 +8,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.android.sunshine.data.WeatherContract;
 
@@ -34,10 +34,10 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    private ArrayAdapter<String> mForecastAdapter;
+    private SimpleCursorAdapter mForecastAdapter;
     private final Context mContext;
 
-    public FetchWeatherTask(Context context, ArrayAdapter<String> forecastAdapter) {
+    public FetchWeatherTask(Context context, SimpleCursorAdapter forecastAdapter) {
         mContext = context;
         mForecastAdapter = forecastAdapter;
     }
@@ -351,12 +351,12 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] result) {
-        if (result != null) {
-            mForecastAdapter.clear();
-            for(String dayForecastStr : result) {
-                mForecastAdapter.add(dayForecastStr);
-            }
-            // New data is back from the server.  Hooray!
-        }
+//        if (result != null) {
+//            mForecastAdapter.clear();
+//            for(String dayForecastStr : result) {
+//                mForecastAdapter.add(dayForecastStr);
+//            }
+//            // New data is back from the server.  Hooray!
+//        }
     }
 }
