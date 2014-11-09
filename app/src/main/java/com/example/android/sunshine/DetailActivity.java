@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.data.WeatherContract;
@@ -77,6 +78,15 @@ public class DetailActivity extends ActionBarActivity {
         private String mForecast;
         private static final int DETAIL_LOADER = 0;
 
+        public ImageView mIconView;
+        public TextView mFriendlyDateView;
+        public TextView mDateView;
+        public TextView mDescriptionView;
+        public TextView mHighTempView;
+        public TextView mLowTempView;
+        public TextView mHumidityView;
+        public TextView mWindView;
+        public TextView mPressureView;
 
         public DetailFragment() {
             setHasOptionsMenu(true);
@@ -95,6 +105,15 @@ public class DetailActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            mIconView = (ImageView)rootView.findViewById(R.id.detail_icon);
+            mDateView = (TextView)rootView.findViewById(R.id.detail_date_textview);
+            mFriendlyDateView = (TextView)rootView.findViewById(R.id.detail_day_textview);
+            mDescriptionView = (TextView)rootView.findViewById(R.id.detail_forecast_textview);
+            mHighTempView = (TextView)rootView.findViewById(R.id.detail_high_textview);
+            mLowTempView = (TextView)rootView.findViewById(R.id.detail_low_textview);
+            mHumidityView = (TextView)rootView.findViewById(R.id.detail_humidity_textview);
+            mWindView = (TextView)rootView.findViewById(R.id.detail_wind_textview);
+            mPressureView = (TextView)rootView.findViewById(R.id.detail_pressure_textview);
 
             // Not needed anymore since OnCreateLoader already does this including after view is destroyed (e.g. via screen flip)
             //Intent intent = getActivity().getIntent();
@@ -206,28 +225,46 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
             if (cursor.moveToFirst()) {
-                String desc =
-                        cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
-                String dateText =
-                        cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT));
 
+                // Read weather condition ID form cursor
+                int weatherId = cursor.getInt(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
+
+                // Use placeholder image for now
+                mIconView.setImageResource(R.drawable.ic_launcher);
+
+                String desc = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
+                String date = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT));
+                String dateText = Utility.getFormattedMonthDay(getActivity(), date);
+                String friendlyDateText = Utility.getDayName(getActivity(), date);
                 double high = cursor.getDouble(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)));
                 double low = cursor.getDouble(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)));
+                float humidity = cursor.getFloat(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_HUMIDITY)));
+                float pressure = cursor.getFloat(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_PRESSURE)));
+                float wind_speed = cursor.getFloat(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)));
+                float wind_dir = cursor.getFloat(cursor.getColumnIndex((WeatherContract.WeatherEntry.COLUMN_DEGREES)));
 
                 boolean isMetric = Utility.isMetric(getActivity());
 
-                TextView dateView = (TextView)getView().findViewById(R.id.detail_date_textview);
-                TextView forecastView = (TextView)getView().findViewById(R.id.detail_forecast_textview);
-                TextView highView = (TextView)getView().findViewById(R.id.detail_high_textview);
-                TextView lowView = (TextView)getView().findViewById(R.id.detail_low_textview);
+//              TextView dateView = (TextView)getView().findViewById(R.id.detail_date_textview);
+//              TextView descriptionView = (TextView)getView().findViewById(R.id.detail_forecast_textview);
+//              TextView highTempView = (TextView)getView().findViewById(R.id.detail_high_textview);
+//              TextView lowTempView = (TextView)getView().findViewById(R.id.detail_low_textview);
 
-                dateView.setText(Utility.formatDate(dateText));
-                forecastView.setText(desc);
-                highView.setText(Utility.formatTemperature(high,isMetric) + "\u00B0");
-                lowView.setText(Utility.formatTemperature(low,isMetric) + "\u00B0");
+                mDateView.setText(dateText);
+                mFriendlyDateView.setText(friendlyDateText);
+                mDescriptionView.setText(desc);
+                mHighTempView.setText(Utility.formatTemperature(getActivity(), high, isMetric));
+                mLowTempView.setText(Utility.formatTemperature(getActivity(), low, isMetric));
+                mWindView.setText(Utility.getFormattedWind(getActivity(),wind_speed,wind_dir));
+                mPressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
+                mHumidityView.setText(getActivity().getString(R.string.format_humidity, humidity));
 
                 // We still need this for the share intent
-                mForecast = String.format("%s - %s - %s/%s", dateView.getText(), forecastView.getText(), highView.getText(), lowView.getText());
+                mForecast = String.format("%s - %s - %s/%s",
+                        mDateView.getText(),
+                        mDescriptionView.getText(),
+                        mHighTempView.getText(),
+                        mLowTempView.getText());
             }
         }
 
@@ -237,3 +274,4 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 }
+
