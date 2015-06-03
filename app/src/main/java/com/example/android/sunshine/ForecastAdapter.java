@@ -10,8 +10,8 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
@@ -63,13 +63,23 @@ public class ForecastAdapter extends CursorAdapter {
         // values through the viewHolder references instead of costly findViewById calls
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
+        int viewType = getItemViewType(cursor.getPosition());
+
         // Read weather icon ID from cursor
-        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
+        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
 
         // Use placeholder image for now
        // ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
-       viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
-
+       switch (viewType) {
+           case VIEW_TYPE_TODAY: {
+               viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+               break;
+           }
+           case VIEW_TYPE_FUTURE_DAY: {
+               viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
+               break;
+           }
+       }
         // Read date from cursor
         String dateString = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
         // Find TextView and set formatted date on it

@@ -196,12 +196,12 @@ public class DetailActivity extends ActionBarActivity {
                     WeatherContract.WeatherEntry.COLUMN_DATETEXT,
                     WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
                     WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-                    WeatherContract. WeatherEntry.COLUMN_MIN_TEMP,
-                    WeatherContract. WeatherEntry.COLUMN_HUMIDITY,
-                    WeatherContract. WeatherEntry.COLUMN_PRESSURE,
-                    WeatherContract. WeatherEntry.COLUMN_WIND_SPEED,
-                    WeatherContract. WeatherEntry.COLUMN_DEGREES,
-                    WeatherContract. WeatherEntry.COLUMN_WEATHER_ID,
+                    WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+                    WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+                    WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+                    WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+                    WeatherContract.WeatherEntry.COLUMN_DEGREES,
+                    WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
                     // This works because the WeatherProvider returns location data joined with weather data
                     // even though they're stored in two different tables
                     WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
@@ -229,8 +229,8 @@ public class DetailActivity extends ActionBarActivity {
                 // Read weather condition ID form cursor
                 int weatherId = cursor.getInt(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
 
-                // Use placeholder image for now
-                mIconView.setImageResource(R.drawable.ic_launcher);
+                // Use appropriate image for weather condition
+                mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
                 String desc = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
                 String date = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT));
@@ -256,7 +256,7 @@ public class DetailActivity extends ActionBarActivity {
                 mHighTempView.setText(Utility.formatTemperature(getActivity(), high, isMetric));
                 mLowTempView.setText(Utility.formatTemperature(getActivity(), low, isMetric));
                 mWindView.setText(Utility.getFormattedWind(getActivity(),wind_speed,wind_dir));
-                mPressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
+                mPressureView.setText(getActivity().getString(R.string.format_pressure,pressure));
                 mHumidityView.setText(getActivity().getString(R.string.format_humidity, humidity));
 
                 // We still need this for the share intent
